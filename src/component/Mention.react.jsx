@@ -1,11 +1,89 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { bool } from 'prop-types';
 import classnames from 'classnames';
 import { EditorCore } from 'rc-editor-core';
 import { EditorState, SelectionState, ContentState, CompositeDecorator } from 'draft-js';
 
 import createMention from '../utils/createMention';
 import exportContent from '../utils/exportContent';
+import getRegExp from '../utils/getRegExp';
+
+const addMentionKeyToCharacterList = (characterList, startIndex, length, mentionKey) => {
+  for (let index = 0; index < length; index++) {
+    const characterMetadata = characterList.get(startIndex + index);
+    const meta = characterMetadata.set("entity", mentionKey);
+    characterList = characterList.set(startIndex + index, meta);
+  }
+
+  return characterList;
+}
+
+const addMentionsToContentBlock = (contentState, block, trigger) => {
+  let characterList = block.getCharacterList();
+  const length = characterList.length;
+  const text = block.getText();
+
+  let token = "";
+  let startIndex = 0;
+
+  const regex = getRegExp(trigger);
+
+  for (let index = 0; index <= length; index++) {
+    const ch = text[index];
+    const isSpace = /\s/g.test(ch);
+    const isEnd = index === length;
+
+    if (!isSpace && !isEnd) {
+      if (!token) {
+        startIndex = index;
+      }
+
+      token += ch;
+      continue;
+    }
+    
+    if (!token) {
+      continue;
+    }
+    
+    const isMention = regex.test(token);
+    if (!isMention) {
+      token = "";
+      continue;
+    }
+
+    contentState = contentState.createEntity('mention', 'IMMUTABLE', token);
+    const mentionKey = contentState.getLastCreatedEntityKey();
+
+    characterList = addMentionKeyToCharacterList(characterList, startIndex, token.length, mentionKey);
+    block = block.set("characterList", characterList);
+  }
+
+  return [contentState, block];
+}
+
+const addMentionsToContentState = (contentState, trigger = "@") => {
+  debugger
+  if (!contentState) {
+    return contentState;
+  }
+
+  const blocks = contentState.getBlocksAsArray();
+  
+  const newBlocks = [];
+  let newContentState = contentState;
+
+  blocks.forEach(block => {
+    const [contentStateAfterChange, newBlock] = addMentionsToContentBlock(newContentState, block, trigger);
+    newBlocks.push(newBlock);
+    newContentState = contentStateAfterChange;
+  });
+
+  const entityMap = newContentState.getEntityMap();
+  const result = ContentState.createFromBlockArray(newBlocks, entityMap);
+  console.log("RESULT", result)
+  return result;
+}
 
 class Mention extends React.Component {
   static propTypes = {
@@ -145,10 +223,13 @@ class Mention extends React.Component {
       multilines: multiLines,
     });
     const editorProps = this.controlledMode ? { value: this.state.value } : {};
-    const defaultValueState = defaultValue &&
+    let defaultValueState = defaultValue &&
       EditorState.createWithContent(
-        typeof defaultValue === 'string' ? ContentState.createFromText(defaultValue) : defaultValue
+        addMentionsToContentState( 
+          typeof defaultValue === 'string' ? ContentState.createFromText(defaultValue) : defaultValue, 
+          this.props.prefix)
         , this._decorator);
+
     return (
       <div className={editorClass} style={style} ref={wrapper => this._wrapper = wrapper}>
         <EditorCore
