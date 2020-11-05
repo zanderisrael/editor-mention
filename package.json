@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/react-component/mention/issues"
   },
-  "main": "./build/common",
+  "main": "./lib/index",
   "module": "./es/index",
   "files": [
     "assets/*.css",
@@ -54,9 +54,6 @@
     "react-dom": "^16.0.0",
     "react-test-renderer": "16.8.6"
   },
-  "pre-commit": [
-    "lint"
-  ],
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "classnames": "^2.2.5",
