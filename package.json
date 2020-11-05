@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/react-component/mention/issues"
   },
-  "main": "./lib/index",
+  "main": "./build/common",
   "module": "./es/index",
   "files": [
     "assets/*.css",
