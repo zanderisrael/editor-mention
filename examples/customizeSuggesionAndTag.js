@@ -4,7 +4,7 @@ import 'rc-editor-mention/assets/index.less';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import Mention from 'rc-editor-mention';
+import Mention, {toEditorState} from 'rc-editor-mention';
 
 const Nav = Mention.Nav;
 
@@ -57,6 +57,7 @@ class MentionEditor extends React.Component {
         mode="immutable"
         suggestions={suggestions}
         tag={Tag}
+        defaultValue={toEditorState('hello @afc163 ')}
       />
     </div>);
   }

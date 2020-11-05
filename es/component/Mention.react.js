@@ -1,52 +1,16 @@
-'use strict';
+import _extends from 'babel-runtime/helpers/extends';
+import _classCallCheck from 'babel-runtime/helpers/classCallCheck';
+import _possibleConstructorReturn from 'babel-runtime/helpers/possibleConstructorReturn';
+import _inherits from 'babel-runtime/helpers/inherits';
+import React from 'react';
+import PropTypes, { bool } from 'prop-types';
+import classnames from 'classnames';
+import { EditorCore } from 'rc-editor-core';
+import { EditorState, SelectionState, ContentState, CompositeDecorator } from 'draft-js';
 
-exports.__esModule = true;
-
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
-
-var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
-
-var _inherits2 = require('babel-runtime/helpers/inherits');
-
-var _inherits3 = _interopRequireDefault(_inherits2);
-
-var _react = require('react');
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = require('prop-types');
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _classnames2 = require('classnames');
-
-var _classnames3 = _interopRequireDefault(_classnames2);
-
-var _rcEditorCore = require('rc-editor-core');
-
-var _draftJs = require('draft-js');
-
-var _createMention = require('../utils/createMention');
-
-var _createMention2 = _interopRequireDefault(_createMention);
-
-var _exportContent = require('../utils/exportContent');
-
-var _exportContent2 = _interopRequireDefault(_exportContent);
-
-var _getRegExp = require('../utils/getRegExp');
-
-var _getRegExp2 = _interopRequireDefault(_getRegExp);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+import createMention from '../utils/createMention';
+import exportContent from '../utils/exportContent';
+import getRegExp from '../utils/getRegExp';
 
 var addMentionKeyToCharacterList = function addMentionKeyToCharacterList(characterList, startIndex, length, mentionKey) {
   for (var index = 0; index < length; index++) {
@@ -66,7 +30,7 @@ var addMentionsToContentBlock = function addMentionsToContentBlock(contentState,
   var token = "";
   var startIndex = 0;
 
-  var regex = (0, _getRegExp2['default'])(trigger);
+  var regex = getRegExp(trigger);
 
   for (var index = 0; index <= length; index++) {
     var ch = text[index];
@@ -124,16 +88,16 @@ var addMentionsToContentState = function addMentionsToContentState(contentState)
   });
 
   var entityMap = newContentState.getEntityMap();
-  return _draftJs.ContentState.createFromBlockArray(newBlocks, entityMap);
+  return ContentState.createFromBlockArray(newBlocks, entityMap);
 };
 
 var Mention = function (_React$Component) {
-  (0, _inherits3['default'])(Mention, _React$Component);
+  _inherits(Mention, _React$Component);
 
   function Mention(props) {
-    (0, _classCallCheck3['default'])(this, Mention);
+    _classCallCheck(this, Mention);
 
-    var _this = (0, _possibleConstructorReturn3['default'])(this, _React$Component.call(this, props));
+    var _this = _possibleConstructorReturn(this, _React$Component.call(this, props));
 
     _this.onEditorChange = function (editorState) {
       var selection = editorState.getSelection();
@@ -144,7 +108,7 @@ var Mention = function (_React$Component) {
         _this.setState({
           selection: selection
         }, function () {
-          _this.props.onChange(content, (0, _exportContent2['default'])(content));
+          _this.props.onChange(content, exportContent(content));
         });
       } else {
         _this.setState({
@@ -178,7 +142,7 @@ var Mention = function (_React$Component) {
       /*eslint-enable*/
     };
 
-    _this.mention = (0, _createMention2['default'])({
+    _this.mention = createMention({
       prefix: _this.getPrefix(props),
       tag: props.tag,
       mode: props.mode,
@@ -190,8 +154,8 @@ var Mention = function (_React$Component) {
 
     _this.state = {
       suggestions: props.suggestions,
-      value: props.value && _draftJs.EditorState.createWithContent(props.value, new _draftJs.CompositeDecorator(_this.mention.decorators)),
-      selection: _draftJs.SelectionState.createEmpty()
+      value: props.value && EditorState.createWithContent(props.value, new CompositeDecorator(_this.mention.decorators)),
+      selection: SelectionState.createEmpty()
     };
 
     if (typeof props.defaultValue === 'string') {
@@ -210,7 +174,7 @@ var Mention = function (_React$Component) {
 
     var value = nextProps.value;
     if (value && selection) {
-      value = _draftJs.EditorState.acceptSelection(_draftJs.EditorState.createWithContent(value, this._decorator), selection);
+      value = EditorState.acceptSelection(EditorState.createWithContent(value, this._decorator), selection);
     }
     this.setState({
       suggestions: suggestions,
@@ -247,18 +211,18 @@ var Mention = function (_React$Component) {
     var suggestions = this.state.suggestions;
     var Suggestions = this.Suggestions;
 
-    var editorClass = (0, _classnames3['default'])(className, (_classnames = {}, _classnames[prefixCls + '-wrapper'] = true, _classnames.readonly = readOnly, _classnames.disabled = disabled, _classnames.multilines = multiLines, _classnames));
+    var editorClass = classnames(className, (_classnames = {}, _classnames[prefixCls + '-wrapper'] = true, _classnames.readonly = readOnly, _classnames.disabled = disabled, _classnames.multilines = multiLines, _classnames));
     var editorProps = this.controlledMode ? { value: this.state.value } : {};
-    var defaultValueState = defaultValue && _draftJs.EditorState.createWithContent(addMentionsToContentState(typeof defaultValue === 'string' ? _draftJs.ContentState.createFromText(defaultValue) : defaultValue, this.props.prefix), this._decorator);
+    var defaultValueState = defaultValue && EditorState.createWithContent(addMentionsToContentState(typeof defaultValue === 'string' ? ContentState.createFromText(defaultValue) : defaultValue, this.props.prefix), this._decorator);
 
-    return _react2['default'].createElement(
+    return React.createElement(
       'div',
       { className: editorClass, style: style, ref: function ref(wrapper) {
           return _this2._wrapper = wrapper;
         } },
-      _react2['default'].createElement(
-        _rcEditorCore.EditorCore,
-        (0, _extends3['default'])({
+      React.createElement(
+        EditorCore,
+        _extends({
           ref: function ref(editor) {
             return _this2._editor = editor;
           },
@@ -276,7 +240,7 @@ var Mention = function (_React$Component) {
         }, editorProps, {
           readOnly: readOnly || disabled
         }),
-        _react2['default'].createElement(Suggestions, {
+        React.createElement(Suggestions, {
           mode: tag ? 'immutable' : mode,
           prefix: this.getPrefix(),
           prefixCls: prefixCls,
@@ -296,34 +260,34 @@ var Mention = function (_React$Component) {
   };
 
   return Mention;
-}(_react2['default'].Component);
+}(React.Component);
 
 Mention.propTypes = {
-  value: _propTypes2['default'].object,
-  suggestions: _propTypes2['default'].array,
-  prefix: _propTypes2['default'].oneOfType([_propTypes2['default'].string, _propTypes2['default'].arrayOf(_propTypes2['default'].string)]),
-  prefixCls: _propTypes2['default'].string,
-  tag: _propTypes2['default'].oneOfType([_propTypes2['default'].element, _propTypes2['default'].func]),
-  style: _propTypes2['default'].object,
-  className: _propTypes2['default'].string,
-  onSearchChange: _propTypes2['default'].func,
-  onChange: _propTypes2['default'].func,
-  mode: _propTypes2['default'].string,
-  multiLines: _propTypes2['default'].bool,
-  suggestionStyle: _propTypes2['default'].object,
-  placeholder: _propTypes2['default'].string,
-  defaultValue: _propTypes2['default'].object,
-  notFoundContent: _propTypes2['default'].any,
-  position: _propTypes2['default'].string,
-  onFocus: _propTypes2['default'].func,
-  onBlur: _propTypes2['default'].func,
-  onSelect: _propTypes2['default'].func,
-  onKeyDown: _propTypes2['default'].func,
-  getSuggestionContainer: _propTypes2['default'].func,
-  noRedup: _propTypes2['default'].bool,
-  mentionStyle: _propTypes2['default'].object,
-  placement: _propTypes2['default'].string,
-  editorKey: _propTypes2['default'].string
+  value: PropTypes.object,
+  suggestions: PropTypes.array,
+  prefix: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  prefixCls: PropTypes.string,
+  tag: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onSearchChange: PropTypes.func,
+  onChange: PropTypes.func,
+  mode: PropTypes.string,
+  multiLines: PropTypes.bool,
+  suggestionStyle: PropTypes.object,
+  placeholder: PropTypes.string,
+  defaultValue: PropTypes.object,
+  notFoundContent: PropTypes.any,
+  position: PropTypes.string,
+  onFocus: PropTypes.func,
+  onBlur: PropTypes.func,
+  onSelect: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  getSuggestionContainer: PropTypes.func,
+  noRedup: PropTypes.bool,
+  mentionStyle: PropTypes.object,
+  placement: PropTypes.string,
+  editorKey: PropTypes.string
 };
 Mention.controlledMode = false;
 
@@ -342,5 +306,4 @@ Mention.defaultProps = {
   mentionStyle: {}
 };
 
-exports['default'] = Mention;
-module.exports = exports['default'];
+export default Mention;

@@ -63,7 +63,6 @@ const addMentionsToContentBlock = (contentState, block, trigger) => {
 }
 
 const addMentionsToContentState = (contentState, trigger = "@") => {
-  debugger
   if (!contentState) {
     return contentState;
   }
@@ -80,9 +79,7 @@ const addMentionsToContentState = (contentState, trigger = "@") => {
   });
 
   const entityMap = newContentState.getEntityMap();
-  const result = ContentState.createFromBlockArray(newBlocks, entityMap);
-  console.log("RESULT", result)
-  return result;
+  return ContentState.createFromBlockArray(newBlocks, entityMap);
 }
 
 class Mention extends React.Component {
