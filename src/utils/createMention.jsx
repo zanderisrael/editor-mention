@@ -51,7 +51,7 @@ export default function createMention(config = {}) {
     callbacks,
     mentionStore,
   };
-  const suggestionRegex = getRegExp(config.prefix);
+  const suggestionRegex = getRegExp(config.prefix, config.suggestions, true);
 
   const tag = config.tag || MentionContent;
   const decorators = [{
@@ -62,7 +62,7 @@ export default function createMention(config = {}) {
       {...props}
       {...componentProps}
       style={config.mentionStyle}
-      suggestionRegex={getRegExp(config.prefix)}
+      suggestionRegex={getRegExp(config.prefix, config.suggestions, false)}
     />),
   }];
   if (config.mode === 'immutable') {

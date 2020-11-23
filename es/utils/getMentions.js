@@ -2,8 +2,9 @@ import getRegExp from './getRegExp';
 
 export default function getMentions(contentState) {
   var prefix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '@';
+  var suggestions = arguments[2];
 
-  var regex = getRegExp(prefix);
+  var regex = getRegExp(prefix, suggestions, true);
   var entities = [];
   contentState.getBlockMap().forEach(function (block) {
     var blockText = block.getText();

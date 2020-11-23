@@ -18,7 +18,7 @@ const addMentionKeyToCharacterList = (characterList, startIndex, length, mention
   return characterList;
 }
 
-const addMentionsToContentBlock = (contentState, block, trigger) => {
+const addMentionsToContentBlock = (contentState, block, trigger, suggestions) => {
   let characterList = block.getCharacterList();
   const length = characterList.length;
   const text = block.getText();
@@ -26,7 +26,7 @@ const addMentionsToContentBlock = (contentState, block, trigger) => {
   let token = "";
   let startIndex = 0;
 
-  const regex = getRegExp(trigger);
+  const regex = getRegExp(trigger, suggestions, true);
 
   for (let index = 0; index <= length; index++) {
     const ch = text[index];
@@ -62,7 +62,7 @@ const addMentionsToContentBlock = (contentState, block, trigger) => {
   return [contentState, block];
 }
 
-const addMentionsToContentState = (contentState, trigger = "@") => {
+const addMentionsToContentState = (contentState, trigger = "@", suggestions) => {
   if (!contentState) {
     return contentState;
   }
@@ -73,7 +73,7 @@ const addMentionsToContentState = (contentState, trigger = "@") => {
   let newContentState = contentState;
 
   blocks.forEach(block => {
-    const [contentStateAfterChange, newBlock] = addMentionsToContentBlock(newContentState, block, trigger);
+    const [contentStateAfterChange, newBlock] = addMentionsToContentBlock(newContentState, block, trigger, suggestions);
     newBlocks.push(newBlock);
     newContentState = contentStateAfterChange;
   });
@@ -123,6 +123,7 @@ class Mention extends React.Component {
       tag: props.tag,
       mode: props.mode,
       mentionStyle: props.mentionStyle,
+      suggestions: props.suggestions
     });
 
     this.Suggestions = this.mention.Suggestions;
