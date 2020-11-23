@@ -22,7 +22,7 @@ var addMentionKeyToCharacterList = function addMentionKeyToCharacterList(charact
   return characterList;
 };
 
-var addMentionsToContentBlock = function addMentionsToContentBlock(contentState, block, trigger) {
+var addMentionsToContentBlock = function addMentionsToContentBlock(contentState, block, trigger, suggestions) {
   var characterList = block.getCharacterList();
   var length = characterList.length;
   var text = block.getText();
@@ -30,7 +30,7 @@ var addMentionsToContentBlock = function addMentionsToContentBlock(contentState,
   var token = "";
   var startIndex = 0;
 
-  var regex = getRegExp(trigger);
+  var regex = getRegExp(trigger, suggestions, true);
 
   for (var index = 0; index <= length; index++) {
     var ch = text[index];
@@ -68,6 +68,7 @@ var addMentionsToContentBlock = function addMentionsToContentBlock(contentState,
 
 var addMentionsToContentState = function addMentionsToContentState(contentState) {
   var trigger = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "@";
+  var suggestions = arguments[2];
 
   if (!contentState) {
     return contentState;
@@ -79,7 +80,7 @@ var addMentionsToContentState = function addMentionsToContentState(contentState)
   var newContentState = contentState;
 
   blocks.forEach(function (block) {
-    var _addMentionsToContent = addMentionsToContentBlock(newContentState, block, trigger),
+    var _addMentionsToContent = addMentionsToContentBlock(newContentState, block, trigger, suggestions),
         contentStateAfterChange = _addMentionsToContent[0],
         newBlock = _addMentionsToContent[1];
 
@@ -146,7 +147,8 @@ var Mention = function (_React$Component) {
       prefix: _this.getPrefix(props),
       tag: props.tag,
       mode: props.mode,
-      mentionStyle: props.mentionStyle
+      mentionStyle: props.mentionStyle,
+      suggestions: props.suggestions
     });
 
     _this.Suggestions = _this.mention.Suggestions;

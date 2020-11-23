@@ -121,7 +121,7 @@ export default class Suggestions extends React.Component {
       onSelect(mention, data || mention);
     }
     if (this.props.noRedup) {
-      const mentions = getMentions(editorState.getCurrentContent(), trigger);
+      const mentions = getMentions(editorState.getCurrentContent(), trigger, this.props.suggestions);
       if (mentions.indexOf(`${trigger}${mention}`) !== -1) {
         // eslint-disable-next-line
         console.warn('you have specified `noRedup` props but have duplicated mentions.');

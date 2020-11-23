@@ -58,7 +58,7 @@ export default function createMention() {
     callbacks: callbacks,
     mentionStore: mentionStore
   };
-  var suggestionRegex = getRegExp(config.prefix);
+  var suggestionRegex = getRegExp(config.prefix, config.suggestions, true);
 
   var tag = config.tag || MentionContent;
   var decorators = [{
@@ -68,7 +68,7 @@ export default function createMention() {
     component: function component(props) {
       return React.createElement(SuggestionPortal, _extends({}, props, componentProps, {
         style: config.mentionStyle,
-        suggestionRegex: getRegExp(config.prefix)
+        suggestionRegex: getRegExp(config.prefix, config.suggestions, false)
       }));
     }
   }];
