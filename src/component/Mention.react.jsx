@@ -23,41 +23,20 @@ const addMentionsToContentBlock = (contentState, block, trigger, suggestions) =>
   const length = characterList.length;
   const text = block.getText();
 
-  let token = "";
-  let startIndex = 0;
 
-  const regex = getRegExp(trigger, suggestions, true);
+  const regex = getRegExp(trigger, suggestions, true, true);
+  const matches = text.matchAll(regex);
 
-  for (let index = 0; index <= length; index++) {
-    const ch = text[index];
-    const isSpace = /\s/g.test(ch);
-    const isEnd = index === length;
+  for (const match of matches) {
+    const mention = match[0];
 
-    if (!isSpace && !isEnd) {
-      if (!token) {
-        startIndex = index;
-      }
-
-      token += ch;
-      continue;
-    }
-    
-    if (!token) {
-      continue;
-    }
-    
-    const isMention = regex.test(token);
-    if (!isMention) {
-      token = "";
-      continue;
-    }
-
-    contentState = contentState.createEntity('mention', 'IMMUTABLE', token);
+    contentState = contentState.createEntity('mention', 'IMMUTABLE', mention);
     const mentionKey = contentState.getLastCreatedEntityKey();
 
-    characterList = addMentionKeyToCharacterList(characterList, startIndex, token.length, mentionKey);
+    characterList = addMentionKeyToCharacterList(characterList, match.index, mention.length, mentionKey);
     block = block.set("characterList", characterList);
   }
+
 
   return [contentState, block];
 }
@@ -225,7 +204,7 @@ class Mention extends React.Component {
       EditorState.createWithContent(
         addMentionsToContentState( 
           typeof defaultValue === 'string' ? ContentState.createFromText(defaultValue) : defaultValue, 
-          this.props.prefix)
+          this.props.prefix, suggestions)
         , this._decorator);
 
     return (

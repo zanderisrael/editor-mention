@@ -2,7 +2,7 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
-export default function getRegExp(prefix, suggestions=null, exact=true) {
+export default function getRegExp(prefix, suggestions=null, exact=true, withoutLeadingWhitespace = true) {
   const prefixArray = Array.isArray(prefix) ? prefix : [prefix];
   let prefixToken = prefixArray.join('').replace(/(\$|\^)/g, '\\$1');
 
@@ -32,6 +32,9 @@ export default function getRegExp(prefix, suggestions=null, exact=true) {
         .map((suggestion) => `\(${escapeRegExp(suggestion)})`)
         .join('|');
 
+    if (withoutLeadingWhitespace) {
+      return new RegExp(`()(${prefixToken})(${regExString}){0,1}`, 'g');
+    }
     const regex= new RegExp(`(\\s|^)(${prefixToken})(${regExString}){0,1}`, 'g');
     return regex;
   }
