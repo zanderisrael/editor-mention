@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Mention, { toEditorState } from 'rc-editor-mention';
 
-const originSuggestions = ['afc163', 'benjycui', 'yiminghe', 'jljsj33', 'dqaria', 'RaoHai'];
+const originSuggestions = ['afc163', 'benjycui', 'yiminghe', 'jljsj33', 'dqaria', 'RaoHai', 'some suggestion with spaces'];
 
 const Tag = (props) => {
   return (
@@ -37,7 +37,7 @@ class MentionEditor extends React.Component {
         <Mention style={{ width: 300 }}
           ref="mention"
           onSearchChange={this.onSearchChange}
-          defaultValue={toEditorState('hello @afc163 ')}
+          defaultValue={toEditorState('hello @afc163 @some suggestion with spaces ')}
           suggestions={suggestions} prefix="@"
           tag={Tag}
         />
